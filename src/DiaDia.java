@@ -1,3 +1,5 @@
+package it.uniroma3.diadia;
+
 
 
 import java.util.Scanner;
@@ -25,8 +27,8 @@ public class DiaDia {
 			"puoi raccoglierli, usarli, posarli quando ti sembrano inutili\n" +
 			"o regalarli se pensi che possano ingraziarti qualcuno.\n\n"+
 			"Per conoscere le istruzioni usa il comando 'aiuto'.";
-	
-	static final private String[] elencoComandi = {"vai", "aiuto", "fine"};
+
+	static final private String[] elencoComandi = {"vai", "aiuto", "fine","prendi","posa"};
 
 	private Partita partita;
 
@@ -61,6 +63,10 @@ public class DiaDia {
 			this.vai(comandoDaEseguire.getParametro());
 		else if (comandoDaEseguire.getNome().equals("aiuto"))
 			this.aiuto();
+		else if(comandoDaEseguire.getNome().equals("prendi"))
+			this.prendi(comandoDaEseguire.getParametro());
+		else if(comandoDaEseguire.getNome().equals("posa"))
+			this.posa(comandoDaEseguire.getParametro());
 		else
 			System.out.println("Comando sconosciuto");
 		if (this.partita.vinta()) {
@@ -71,6 +77,41 @@ public class DiaDia {
 	}   
 
 	// implementazioni dei comandi dell'utente:
+
+	private void prendi(String nomeAttrezzo) {
+		if(nomeAttrezzo==null) {
+			System.out.println("Che attrezzo vuoi prendere?");
+		}
+		Attrezzo attrezzo=null;
+		attrezzo=this.partita.getStanzaCorrente().getAttrezzo(nomeAttrezzo);
+		if(attrezzo==null) {
+			System.out.println("Attrezzo inesistente");
+		}
+		else {
+			this.partita.getGiocatore().getAttrezzi().addAttrezzo(attrezzo);
+			this.partita.getStanzaCorrente().removeAttrezzo(attrezzo);
+		}
+		System.out.println("Hai preso l'attrezzo: "+ attrezzo.toString());
+
+
+	}
+
+	private void posa(String nomeAttrezzo) {
+
+		if(nomeAttrezzo==null) {
+			System.out.println("Che attrezzo vuoi posare?");
+		}
+		Attrezzo attrezzo=null;
+		attrezzo=this.partita.getGiocatore().getAttrezzi().getAttrezzo(nomeAttrezzo);
+		if(attrezzo==null) {
+			System.out.println("Attrezzo inesistente");
+		}
+		else {
+			this.partita.getStanzaCorrente().addAttrezzo(attrezzo);
+			this.partita.getGiocatore().getAttrezzi().removeAttrezzo(nomeAttrezzo);
+		}
+		System.out.println("Hai posato l'attrezzo: "+ attrezzo.toString());
+	}
 
 	/**
 	 * Stampa informazioni di aiuto.
@@ -94,8 +135,8 @@ public class DiaDia {
 			System.out.println("Direzione inesistente");
 		else {
 			this.partita.setStanzaCorrente(prossimaStanza);
-			int cfu = this.partita.getCfu();
-			this.partita.setCfu(cfu--);
+			int cfu = this.partita.getGiocatore().getCfu();
+			this.partita.getGiocatore().setCfu(cfu--);
 		}
 		System.out.println(partita.getStanzaCorrente().getDescrizione());
 	}
