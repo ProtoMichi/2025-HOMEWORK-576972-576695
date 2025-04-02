@@ -58,16 +58,16 @@ public class DiaDia {
 		Comando comandoDaEseguire = new Comando(istruzione);
 
 		if (comandoDaEseguire.getNome().equals("fine")) {
-			this.fine(); 
+			this.fine(io); 
 			return true;
 		} else if (comandoDaEseguire.getNome().equals("vai"))
-			this.vai(comandoDaEseguire.getParametro());
+			this.vai(comandoDaEseguire.getParametro(),io);
 		else if (comandoDaEseguire.getNome().equals("aiuto"))
-			this.aiuto();
+			this.aiuto(io);
 		else if(comandoDaEseguire.getNome().equals("prendi"))
-			this.prendi(comandoDaEseguire.getParametro());
+			this.prendi(comandoDaEseguire.getParametro(),io);
 		else if(comandoDaEseguire.getNome().equals("posa"))
-			this.posa(comandoDaEseguire.getParametro());
+			this.posa(comandoDaEseguire.getParametro(),io);
 		else
 			io.mostraMessaggio("Comando sconosciuto");
 		if (this.partita.vinta()) {
