@@ -33,21 +33,19 @@ public class DiaDia {
 	static final private String[] elencoComandi = {"vai", "aiuto", "fine","prendi","posa"};
 
 	private Partita partita;
-	private IOConsole io;
 
 	public DiaDia() {
 		this.partita = new Partita();
-		this.io = new IOConsole();
 	}
 
-	public void gioca() {
+	public void gioca(IOConsole io) {
 		String istruzione; 
 
-		this.io.mostraMessaggio(MESSAGGIO_BENVENUTO);
+		io.mostraMessaggio(MESSAGGIO_BENVENUTO);
 
 		do		
-			istruzione = this.io.leggiRiga();
-		while (!processaIstruzione(istruzione));
+			istruzione = io.leggiRiga();
+		while (!processaIstruzione(istruzione,io));
 	}   
 
 
@@ -56,7 +54,7 @@ public class DiaDia {
 	 *
 	 * @return true se l'istruzione e' eseguita e il gioco continua, false altrimenti
 	 */
-	private boolean processaIstruzione(String istruzione) {
+	private boolean processaIstruzione(String istruzione,IOConsole io) {
 		Comando comandoDaEseguire = new Comando(istruzione);
 
 		if (comandoDaEseguire.getNome().equals("fine")) {
@@ -71,9 +69,9 @@ public class DiaDia {
 		else if(comandoDaEseguire.getNome().equals("posa"))
 			this.posa(comandoDaEseguire.getParametro());
 		else
-			this.io.mostraMessaggio("Comando sconosciuto");
+			io.mostraMessaggio("Comando sconosciuto");
 		if (this.partita.vinta()) {
-			this.io.mostraMessaggio("Hai vinto!");
+			io.mostraMessaggio("Hai vinto!");
 			return true;
 		} else
 			return false;
@@ -81,76 +79,77 @@ public class DiaDia {
 
 	// implementazioni dei comandi dell'utente:
 
-	private void prendi(String nomeAttrezzo) {
+	private void prendi(String nomeAttrezzo,IOConsole io) {
 		if(nomeAttrezzo==null) {
-			this.io.mostraMessaggio("Che attrezzo vuoi prendere?");
+			io.mostraMessaggio("Che attrezzo vuoi prendere?");
 		}
 		Attrezzo attrezzo=null;
 		attrezzo=this.partita.getStanzaCorrente().getAttrezzo(nomeAttrezzo);
 		if(attrezzo==null) {
-			this.io.mostraMessaggio("Attrezzo inesistente");
+			io.mostraMessaggio("Attrezzo inesistente");
 		}
 		else {
 			this.partita.getGiocatore().getAttrezzi().addAttrezzo(attrezzo);
 			this.partita.getStanzaCorrente().removeAttrezzo(attrezzo);
 		}
-		this.io.mostraMessaggio("Hai preso l'attrezzo: "+ attrezzo.toString());
+		io.mostraMessaggio("Hai preso l'attrezzo: "+ attrezzo.toString());
 	}
 
-	private void posa(String nomeAttrezzo) {
+	private void posa(String nomeAttrezzo,IOConsole io) {
 
 		if(nomeAttrezzo==null) {
-			this.io.mostraMessaggio("Che attrezzo vuoi posare?");
+			io.mostraMessaggio("Che attrezzo vuoi posare?");
 		}
 		Attrezzo attrezzo=null;
 		attrezzo=this.partita.getGiocatore().getAttrezzi().getAttrezzo(nomeAttrezzo);
 		if(attrezzo==null) {
-			this.io.mostraMessaggio("Attrezzo inesistente");
+			io.mostraMessaggio("Attrezzo inesistente");
 		}
 		else {
 			this.partita.getStanzaCorrente().addAttrezzo(attrezzo);
 			this.partita.getGiocatore().getAttrezzi().removeAttrezzo(nomeAttrezzo);
 		}
-		this.io.mostraMessaggio("Hai posato l'attrezzo: "+ attrezzo.toString());
+		io.mostraMessaggio("Hai posato l'attrezzo: "+ attrezzo.toString());
 	}
 
 	/**
 	 * Stampa informazioni di aiuto.
 	 */
-	private void aiuto() {
+	private void aiuto(IOConsole io) {
 		for(int i=0; i< elencoComandi.length; i++) 
-			this.io.mostraMessaggio(elencoComandi[i]+" ");
-		this.io.mostraMessaggio("");
+			io.mostraMessaggio(elencoComandi[i]+" ");
+		io.mostraMessaggio("");
 	}
 
 	/**
 	 * Cerca di andare in una direzione. Se c'e' una stanza ci entra 
 	 * e ne stampa il nome, altrimenti stampa un messaggio di errore
 	 */
-	private void vai(String direzione) {
+	private void vai(String direzione,IOConsole io) {
 		if(direzione==null)
-			this.io.mostraMessaggio("Dove vuoi andare ?");
+			io.mostraMessaggio("Dove vuoi andare ?");
 		Stanza prossimaStanza = null;
 		prossimaStanza = this.partita.getStanzaCorrente().getStanzaAdiacente(direzione);
 		if (prossimaStanza == null)
-			this.io.mostraMessaggio("Direzione inesistente");
+			io.mostraMessaggio("Direzione inesistente");
 		else {
 			this.partita.setStanzaCorrente(prossimaStanza);
 			int cfu = this.partita.getGiocatore().getCfu();
 			this.partita.getGiocatore().setCfu(cfu--);
 		}
-		this.io.mostraMessaggio(partita.getStanzaCorrente().getDescrizione());
+		io.mostraMessaggio(partita.getStanzaCorrente().getDescrizione());
 	}
 
 	/**
 	 * Comando "Fine".
 	 */
-	private void fine() {
-		this.io.mostraMessaggio("Grazie di aver giocato!");  // si desidera smettere
+	private void fine(IOConsole io) {
+		io.mostraMessaggio("Grazie di aver giocato!");  // si desidera smettere
 	}
 
 	public static void main(String[] argc) {
 		DiaDia gioco = new DiaDia();
-		gioco.gioca();
+		IOConsole io = new IOConsole();
+		gioco.gioca(io);
 	}
 }
